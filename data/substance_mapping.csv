@@ -1,0 +1,77 @@
+substance name,ecoinvent activity,location
+"1,3,5-triazine-2,4,6(1h,3h,5h)-trione, compd. with 6-(2-(2-methyl-1h-imidazol-1-yl)ethyl)-1,3,5-triazine-2,4-diamine (1:1)","market for triazine-compound, unspecified",GLO
+"1,3,5-triazine-2,4,6-triamine","market for triazine-compound, unspecified",GLO
+"1,3,5-triazine-2,4,6-triamine, polymer with formaldehyde and phenol","market for triazine-compound, unspecified",GLO
+1-cyanoguanidine,"market for chemical, inorganic",GLO
+2-ethylhexyl glycidyl ether,"market for chemical, inorganic",GLO
+"2-propenenitrile, polymer with 1,3-butadiene, carboxy-terminated, polymers with bisphenol a and epichlorohydrin","market for chemical, inorganic",GLO
+3-methoxy-3-methyl-1-butyl acetate,"market for chemical, inorganic",GLO
+"4,4'-diaminodiphenylsulfone","market for chemical, inorganic",GLO
+acrylic acid ester copolymer,"market for chemical, inorganic",GLO
+"acrylonitrile/butadiene copolymer, carboxyl terminated (26/74)","market for chemical, inorganic",GLO
+aluminum hydroxide,aluminium hydroxide production,CN
+aluminum hydroxide oxide,aluminium hydroxide production,CN
+"aluminum, metal","aluminium ingot, primary, to aluminium, wrought alloy market",GLO
+"arsenic, metal",market for arsine,GLO
+barium sulfate,market for barium sulfide,GLO
+bisphenol a,"market for bisphenol A, powder",GLO
+bt resin (cas# 13676-54-5/25722-66-1),"market for chemical, inorganic",GLO
+carbon black,market for carbon black,GLO
+"chromium, metal",market for chromium,GLO
+"copper, metal","market for copper, cathode",GLO
+cupric oxide,,
+dimethyl silicone polymer with silica,market for silicone product,RoW
+dipropylene glycol monomethyl ether,market for propylene,RoW
+"epichlorohydrin, o-cresol, formaldehyde polymer","market for chemical, inorganic",GLO
+epikote 862,"market for chemical, inorganic",GLO
+"ethene, 1,1,2,2-tetrafluoro-, oxidized, polymd., reduced, me esters, reduced, 2,3-dihydroxypropyl ethers",market for ethylene,RoW
+fibrous-glass-wool,market for glass wool mat,GLO
+"formaldehyde, cresol, epichlorohydrin polymer",market for formaldehyde,RoW
+"gold, metal",market for gold,GLO
+"iron, metal",market for pig iron,RoW
+"lead, metallic lead and lead alloys",market for lead,GLO
+magnesium dihydroxide,market for magnesium oxide,GLO
+"magnesium, metal",market for magnesium,GLO
+"manganese, metal",market for manganese,GLO
+"methacrylic acid, polymer with 2,2-bis(p-(2,3-epoxypropoxy)phenyl)propane",market for methacrylic acid,GLO
+"methylacrylic acid, pd (2+) salt",market for methyl methacrylate,RoW
+"nickel, metal","market for nickel, class 1",GLO
+other bismaleimides,"market for epoxy resin, liquid",RoW
+other epoxy resins,"market for epoxy resin, liquid",RoW
+other inorganic phosphorous compounds,market for phosphorous chloride,RoW
+other miscellaneous substances (less than 10%).,,
+other non-halogenated epoxy resins,"market for epoxy resin, liquid",RoW
+other organic compounds.,"market for chemical, organic",GLO
+other organic phosphorous compounds,market for phosphorous chloride,RoW
+other organic silicon compounds,market for activated silica,GLO
+other phenolic resins,market for phenolic resin,RoW
+p-tertbutylphenyl glycidyl ether,"market for chemical, inorganic",GLO
+"palladium, metal",market for palladium,GLO
+phenol p-xylylene dimethyl ether copolymer,market for phenol,RoW
+"phenol, 4,4'-(1-methylethylidene)bis-, polymer with (chloromethyl)oxirane",market for phenol,RoW
+"phenol, polymer with formaldehyde",market for formaldehyde,RoW
+"phenolic polymer resin, epikote 155",market for phenolic resin,RoW
+"phosphorus, elemental (not containing red allotrope)",market for phosphorous chloride,RoW
+plastic: abak - acrylonitrile-butadiene-acrylate,market for acrylonitrile,GLO
+"plastic: ep - epoxide, epoxy","market for epoxy resin insulator, SiO2",GLO
+plastic: pak,market for acrylonitrile-butadiene-styrene copolymer,GLO
+plastic: pi - polyimide,market for acrylonitrile-butadiene-styrene copolymer,GLO
+proprietary material-other acrylates,market for butyl acrylate,RoW
+proprietary material-other bismaleimides,"market for chemical, inorganic",GLO
+proprietary material-other epoxy resins,"market for epoxy resin, liquid",RoW
+proprietary material-other miscellaneous substances.,,
+proprietary material-other phenolic resins,market for phenolic resin,RoW
+quartz,market for silica sand,GLO
+"silica, vitreous",market for activated silica,GLO
+silicon,,
+silicon dioxide,"market for epoxy resin insulator, SiO2",GLO
+"silicon, doped",,
+silicone modified epoxy resin,market for silicone product,RoW
+"silver, metal",market for silver,GLO
+silylated silica,market for activated silica,GLO
+talc,market for steatite,GLO
+tetramethylbiphenyl diglycidyl ether,"market for chemical, inorganic",GLO
+"tin, metal",market for tin,GLO
+trimethylolpropane triacrylate,market for trimethyl borate,GLO
+zinc hydroxide,market for zinc oxide,GLO
+"zinc, metal",market for zinc,GLO
