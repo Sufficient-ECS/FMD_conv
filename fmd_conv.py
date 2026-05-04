@@ -1,4 +1,5 @@
 import click
+import logging
 from lxml import etree
 import numpy as np
 from pathlib import Path
@@ -57,6 +58,13 @@ def treat_node(node, sp_name, hm_name, ns, apply_mapping, node_type):
         }
     }
 
+def sanitize_filename(name: str) -> str:
+    # Replace invalid characters with a space
+    name = re.sub(r'[<>:"/\\|?*\n\r\t]', ' ', name)
+    # Collapse multiple spaces into one
+    name = re.sub(r'\s+', ' ', name)
+    return name.strip()
+
 def ipc1752_to_yaml(xml_file: str, output_folder: str, apply_mapping):
     """
     Parse a single IPC-1752 XML BOM file into a flattened YAML activity.
@@ -68,11 +76,11 @@ def ipc1752_to_yaml(xml_file: str, output_folder: str, apply_mapping):
     - Assign productref_input_001, _002, etc.
     - + homogeneous materials
     """
-    
+
     # Load XML
     parser = etree.XMLParser(ns_clean=True)
     tree = etree.parse(xml_file, parser)
-    
+
     # Define namespaces
     ns = {'ipc': 'http://webstds.ipc.org/175x/2.0'}
 
@@ -81,7 +89,9 @@ def ipc1752_to_yaml(xml_file: str, output_folder: str, apply_mapping):
     product_id_node = product_node.find('ipc:ProductID', ns)
     product_name = f"{product_id_node.get('itemName')}_{product_id_node.get('version')}"
     total_mass = float((product_id_node.find('ipc:Amount', ns).get('value', 0)) if product_id_node.find('ipc:Amount', ns) is not None else 0)
-    
+
+    logging.debug(product_name)
+
     inputs = {}
     computed_mass = 0.0
 
@@ -92,21 +102,25 @@ def ipc1752_to_yaml(xml_file: str, output_folder: str, apply_mapping):
         sp_name = sp_product_node.get('itemName', f"{len(inputs):03d}") \
             if sp_product_node is not None else f"{len(inputs):03d}"
 
+        logging.debug(f"\t{sp_name}")
+
         hmlist = sp.findall('.//ipc:HomogeneousMaterial', ns)
         for hm in hmlist:
             hm_name = hm.get('name', f"HM_{len(inputs)}")
             inputs[f"process_input_{len(inputs):03d}"] = treat_node(hm, sp_name, hm_name, ns, apply_mapping, 'HM')
 
+            logging.debug(f"\t\t{hm_name} {hm.find('ipc:Amount', ns).get('value')}")
+
             subs = hm.findall('.//ipc:Substance', ns) 
-            
             for sub in subs:
                 new_sub = treat_node(sub, sp_name, hm_name, ns, apply_mapping, 'Substance')
                 inputs[f"process_input_{len(inputs):03d}"] = new_sub
+                logging.debug(f"\t\t\t{sub.get('name', 'Unknown')} {sub.find('ipc:Amount', ns).get('value')}")
                 computed_mass += new_sub["amount"]["value"]
 
     tolerance = 0.01  # mg
     if abs(computed_mass - total_mass) > tolerance:
-        print(f"WARNING {xml_file}: mismatch total_mass={total_mass:.2f} vs sum_substances={computed_mass:.2f}")
+        logging.warning(f"{xml_file}: mismatch total_mass={total_mass:.2f} vs sum_substances={computed_mass:.2f}")
 
     yaml_data = {
         'output': {
@@ -119,7 +133,7 @@ def ipc1752_to_yaml(xml_file: str, output_folder: str, apply_mapping):
 
     yaml_data['inputs'] = inputs
 
-    yaml_file = output_folder / f"{product_name}.yaml"
+    yaml_file = output_folder / f"{sanitize_filename(product_name)}.yaml"
     with open(yaml_file, 'w') as f:
         yaml.dump(yaml_data, f, sort_keys=False)
 
@@ -128,10 +142,19 @@ def ipc1752_to_yaml(xml_file: str, output_folder: str, apply_mapping):
 @click.argument("input_files", nargs=-1, type=click.Path(exists=True))
 @click.option("-o", "--output_folder", default="./data/results", help="Output folder for results")
 @click.option("-m", "--mappings_folder", default="./data", help="Folder containing the mappings")
-def run_conv(input_files, output_folder, mappings_folder):
+@click.option("-v", "--verbose", count=True, help="Increase verbosity (-v, -vv, -vvv)")
+def run_conv(input_files, output_folder, mappings_folder, verbose):
     """
     Translate to YAML one or multiple XML FMD files.
     """
+
+    level = logging.WARNING  # default
+    if verbose == 1:
+        level = logging.INFO
+    elif verbose >= 2:
+        level = logging.DEBUG
+
+    logging.basicConfig(level=level)
 
     if not input_files:
         raise click.UsageError("You must provide at least one input file.")

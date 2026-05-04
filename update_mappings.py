@@ -4,14 +4,15 @@ from pathlib import Path
 import pandas as pd
 import re
 import yaml
+import logging
 
 def update_mappings(files, output_folder):
     ns = {'ipc': 'http://webstds.ipc.org/175x/2.0'}
 
-    file_names = ["substance", "subproduct", "homo_material"]
-    c_names = ["substance name", "subproduct name", "homogeneous material"]
-    ipcs = [".//ipc:Substance", ".//ipc:SubProduct/ipc:ProductID", ".//ipc:HomogeneousMaterial"]
-    name_cells = ["name","itemName","name"]
+    file_names = ["subproduct", "homo_material", "substance"]
+    c_names = ["subproduct name", "homogeneous material", "substance name"]
+    ipcs = [".//ipc:SubProduct/ipc:ProductID", ".//ipc:HomogeneousMaterial", ".//ipc:Substance"]
+    name_cells = ["itemName", "name", "name"]
 
     ds = [pd.read_csv(output_folder / f"{file_name}_mapping.csv")\
             .assign(**{c_name: lambda df: df[c_name].str.lower()}) \
@@ -24,11 +25,11 @@ def update_mappings(files, output_folder):
             tree = etree.parse(file)
             root = tree.getroot()
 
-            for d, ipc, name_cell, c_type in zip(ds, ipcs, name_cells, file_names):
-                for sub in root.findall(ipc, ns):
-                    name = sub.get(name_cell).strip().lower()
+            for i, d in enumerate(ds):
+                for sub in root.findall(ipcs[i], ns):
+                    name = sub.get(name_cells[i]).strip().lower()
                     if name not in d:
-                        print(f"Adding {c_type} {name}")
+                        logging.info(f"Adding {file_names[i]} {name}")
                         d[name] = {"ecoinvent activity": None, "location": None}
 
         except Exception as e:
@@ -43,10 +44,19 @@ def update_mappings(files, output_folder):
 @click.command()
 @click.argument("input_files", nargs=-1, type=click.Path(exists=True))
 @click.option("-o", "--output_folder", default="./data", help="Output folder for results")
-def run_conv(input_files, output_folder):
+@click.option("-v", "--verbose", count=True, help="Increase verbosity (-v, -vv, -vvv)")
+def run_conv(input_files, output_folder, verbose):
     """
     Run LCA impacts on one or multiple YAML foreground files.
     """
+
+    level = logging.WARNING  # default
+    if verbose == 1:
+        level = logging.INFO
+    elif verbose >= 2:
+        level = logging.DEBUG
+
+    logging.basicConfig(level=level)
 
     if not input_files:
         raise click.UsageError("You must provide at least one input file.")
