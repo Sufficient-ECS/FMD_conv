@@ -18,13 +18,13 @@ def load_mapping(map_folder):
                  .apply(tuple, axis=1) \
                  .to_dict()
 
-    mapping_dict = {
-        **df_to_map(f"{map_folder}/substance_mapping.csv", "substance name"),
-        **df_to_map(f"{map_folder}/homo_material_mapping.csv", "homogeneous material"),
-        **df_to_map(f"{map_folder}/subproduct_mapping.csv", "subproduct name"),
-    }
+    mapping_dict = [
+        {**df_to_map(f"{map_folder}/subproduct_mapping.csv", "subproduct name")},
+        {**df_to_map(f"{map_folder}/homo_material_mapping.csv", "homogeneous material")},
+        {**df_to_map(f"{map_folder}/substance_mapping.csv", "substance name")},
+    ]
     
-    return lambda name: mapping_dict[name.strip().lower()]
+    return lambda index, name: mapping_dict[index][name.strip().lower()]
 
 def get_mass(node, ns):
     unit = node.get('UOM')
@@ -56,7 +56,7 @@ def treat_node(node, inputs, names, ipcs, ns, apply_mapping, prev_mass = None):
 
         this_names[ind] = name
 
-        map_info = apply_mapping(name)
+        map_info = apply_mapping(ind, name)
         act_name, location = map_info[:2]
         if len(map_info) == 3:
             process = map_info[2]
