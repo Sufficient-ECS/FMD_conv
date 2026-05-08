@@ -28,9 +28,11 @@ def update_mappings(files, output_folder):
             for i, d in enumerate(ds):
                 for sub in root.findall(ipcs[i], ns):
                     name = sub.get(name_cells[i]).strip().lower()
+                    logging.info(f"Treating {file_names[i]} {name}")
                     if name not in d:
                         logging.info(f"Adding {file_names[i]} {name}")
-                        d[name] = {"ecoinvent activity": None, "location": None}
+                        d[name] = {"ecoinvent activity": None, "location": None, "process": None}
+
 
         except Exception as e:
             print(f"Error processing {file}: {e}")
