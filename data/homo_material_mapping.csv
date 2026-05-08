@@ -1,27 +1,82 @@
-homogeneous material,ecoinvent activity,location
-bonding wire - cu,"market for wire drawing, copper",GLO
-bonding wire - cupd,"market for wire drawing, copper",GLO
-bonding wire - cupdau,"market for wire drawing, copper",GLO
-copper alloy,,
-copper core,"metal working, average for copper product manufacturing",RoW
-copper foil,"market for sheet rolling, copper",GLO
-copper foil 1,"market for sheet rolling, copper",GLO
-copper foil 2,"market for sheet rolling, copper",GLO
-copper plating,,
-die encapsulant,,
-die substrate,,
-epoxy adhesive,,
-gold plating,,
-iron alloy,,
-nickel plating,,
-other plating materials,,
-palladium plating,,
-post-plating - lead free,,
-semiconductor die,,
-silver plating,,
-"solder ball - sac, lead free (ag > 1.5%)",,
-"solder ball - sac, lead free (ag ≤  1.5%)",,
-solder mask,,
-substrate core,,
-substrate prepreg,,
-"substrate, pre-plated niau",,
+homogeneous material,ecoinvent activity,location,process
+99.5/0.5 gold/cobalt plating,market for electroplating,GLO,True
+a2424 lubricant,,,
+acrylic glue,"market for chemical, inorganic",GLO,False
+adhesive acrylic,"market for chemical, inorganic",GLO,False
+beryllium copper with lead,,,
+black ink,"market for printing ink, offset, without solvent, in 47.5% solution state",RoW,False
+bonding wire - cu,"market for wire drawing, copper",GLO,True
+bonding wire - cupd,"market for wire drawing, copper",GLO,True
+bonding wire - cupdau,"market for wire drawing, copper",GLO,True
+brass,,,
+c2680,,,
+c5210,,,
+copper alloy,,,
+copper core,"metal working, average for copper product manufacturing",RoW,True
+copper foil,"market for sheet rolling, copper",GLO,True
+copper foil 1,"market for sheet rolling, copper",GLO,True
+copper foil 2,"market for sheet rolling, copper",GLO,True
+copper plating,market for electroplating,GLO,True
+copper-nickel-silicon unplated,,,
+die encapsulant,,,
+die substrate,,,
+e-plate au (hardgold) (electrodeposited hardgold coatings),,,
+e-plate cu (electrodeposited copper coatings),,,
+ep-ni,,,
+epoxy adhesive,,,
+free cutting brass,,,
+free cutting brass (ca360),,,
+gold plating,market for electroplating,GLO,True
+gold plating - 1,market for electroplating,GLO,True
+gold plating - 2,market for electroplating,GLO,True
+grease,,,
+ink,"market for printing ink, offset, without solvent, in 47.5% solution state",RoW,False
+iron alloy,,,
+lcp,,,
+lcp (gf+md)25 black,,,
+lcp e471i,,,
+lcp md25 black,,,
+lcp-gf30,,,
+lim,,,
+lubricant - 1,,,
+lubricant - 2,,,
+nickel plating,market for electroplating,GLO,True
+nickel plating - 1,market for electroplating,GLO,True
+nickel plating - 2,market for electroplating,GLO,True
+other plating materials,,,
+pa46 gf black,,,
+pa6t/66 gf black,,,
+palladium plating,,,
+pbt-gf15 fr(17) green,,,
+pbt-gf6.5 fr(17) green - 1,"market for polyethylene terephthalate, granulate, amorphous",GLO,False
+pbt-gf6.5 fr(17) green - 2,"market for polyethylene terephthalate, granulate, amorphous",GLO,False
+pei gf black,,,
+pei gf blue,,,
+pet,"market for packaging film, low density polyethylene",GLO,False
+phosphor bronze 8% unplated,,,
+polyimide film,,,
+post-plating - lead free,,,
+pp,"market for polypropylene, granulate",GLO,False
+ptfe,,,
+sealing surface treatment,,,
+semiconductor die,,,
+silver plating,market for electroplating,GLO,True
+"solder ball - sac, lead free (ag > 1.5%)",,,
+"solder ball - sac, lead free (ag ≤  1.5%)",,,
+solder mask,,,
+stainless steel - t302,market for iron-nickel-chromium alloy,GLO,False
+stainless steel unplated,,,
+stainless steel unplated - 1,,,
+stainless steel unplated - 2,"market for steel, chromium steel 18/8",GLO,False
+substrate core,,,
+substrate prepreg,,,
+"substrate, pre-plated niau",,,
+sus301,,,
+sus304,,,
+sus304wpb,market for iron-nickel-chromium alloy,GLO,False
+swp-b,,,
+tin copper unplated,,,
+tin plating,"market for tin plating, pieces",GLO,False
+tpe  gray,"market for tube insulation, elastomere",GLO,False
+yellow ink,"market for printing ink, offset, without solvent, in 47.5% solution state",GLO,False
+zro2,market for zirconium oxide,GLO,False
