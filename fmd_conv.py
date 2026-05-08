@@ -14,21 +14,17 @@ def load_mapping(map_folder):
     def df_to_map(path, key_col):
         df = pd.read_csv(path)
         df[key_col] = df[key_col].str.strip().str.lower()
-        return df.set_index(key_col)[["ecoinvent activity", "location"]] \
+        return df.set_index(key_col)[["ecoinvent activity", "location", "process"]] \
                  .apply(tuple, axis=1) \
                  .to_dict()
 
     mapping_dict = {
         **df_to_map(f"{map_folder}/substance_mapping.csv", "substance name"),
         **df_to_map(f"{map_folder}/homo_material_mapping.csv", "homogeneous material"),
+        **df_to_map(f"{map_folder}/subproduct_mapping.csv", "subproduct name"),
     }
-
+    
     return lambda name: mapping_dict[name.strip().lower()]
-
-default_ac = {
-    "Substance": ('market for copper, anode', 'GLO'),
-    "HM": ('metal working, average for copper product manufacturing', 'RoW')
-    }
 
 def get_mass(node, ns):
     unit = node.get('UOM')
@@ -36,35 +32,63 @@ def get_mass(node, ns):
     if value_str is None: # If not present, look for a child <Amount> node
         amount_node = node.find('ipc:Amount', ns)
         if amount_node is not None:
-            value_str = amount_node.get('value', '0')
+            value_str = amount_node.get('value')
             unit = amount_node.get('UOM')
         else:
-            value_str = '0'
+            return 0 * u.gram
     return u.parse_expression(f"{value_str} {unit}")
 
-def treat_node(node, sp_name, hm_name, mass, apply_mapping, node_type):
-    this_name = node.get('name', 'Unknown')
+def treat_node(node, inputs, names, ipcs, ns, apply_mapping, prev_mass = None):
+    computed_mass = 0 * u.gram
 
-    act_name, location = apply_mapping(this_name)
+    for i in node.findall(ipcs[0], ns):
+        this_names = names.copy()
+        ind = this_names.index("_")
 
-    if mass == 0:
-        logging.warning(f"The mass for the homogeneous {this_name} in file {xml_file.name} is zero")
 
-    if pd.isna(act_name):
-        act_name, location = default_ac[node_type]
-        mass = 0 * u.gram
+        if ind == 0: # If is first layer
+            id_node = i.find(".//ipc:ProductID", ns)
+            name = id_node.get("itemName", ns)
+            mass = get_mass(id_node, ns)
+        else:
+            name = i.get("name", ns)
+            mass = get_mass(i, ns)
 
-    return {
-        'act_name': act_name,
-        'location': location,
-        'c_subproduct': sp_name,
-        'c_homogeneous_material': hm_name,
-        'c_substance': 'process' if type == "HM" else this_name,
-        'amount': {
-            'value': mass.magnitude,
-            'unit': mass.units
-        }
-    }
+        this_names[ind] = name
+
+        map_info = apply_mapping(name)
+        act_name, location = map_info[:2]
+        if len(map_info) == 3:
+            process = map_info[2]
+
+        indent = (1 + ind) * "\t"
+        is_accounted = not pd.isna(act_name)
+        indicator = '!' if not is_accounted else ''
+        if prev_mass != None: # If is not the first layer
+            logging.debug(f"{indicator}{indent}{name} {mass} ({(mass/prev_mass).to('%'):.2f})")
+        else:
+            logging.debug(f"{indicator}{indent}{name} {mass}")
+
+        if is_accounted:
+            in_name = f"process_input_{len(inputs):03d}"
+            inputs[in_name] =  {
+                'act_name': act_name,
+                'location': location,
+                'c_subproduct': this_names[0],
+                'c_homogeneous_material': this_names[1],
+                'c_substance': this_names[2],
+                'amount': {
+                    'value': mass.magnitude,
+                    'unit': str(mass.units)
+                }
+            }
+
+        if this_names[-1] == "_" and (process or pd.isna(process)):
+            computed_mass += treat_node(i, inputs, this_names, ipcs[1:], ns, apply_mapping, prev_mass = mass)
+        else:
+            computed_mass += mass
+
+    return computed_mass
 
 def sanitize_filename(name: str) -> str:
     # Replace invalid characters with a space
@@ -103,35 +127,10 @@ def ipc1752_to_yaml(xml_file: str, output_folder: str, apply_mapping):
     logging.debug(product_name)
 
     inputs = {}
-    computed_mass = 0.0
+    computed_mass = 0.0 * u.gram
 
-    # ------------------------------------------------------
-    subproducts = product_node.findall('ipc:SubProduct', ns)
-    for sp in subproducts: # iteration in all subproducts
-        sp_product_node = sp.find('ipc:ProductID', ns)
-        sp_name = sp_product_node.get('itemName', f"{len(inputs):03d}") \
-            if sp_product_node is not None else f"{len(inputs):03d}"
-
-        logging.debug(f"\t{sp_name}")
-
-        hmlist = sp.findall('.//ipc:HomogeneousMaterial', ns)
-        for hm in hmlist:
-            hm_name = hm.get('name', f"HM_{len(inputs)}")
-            hm_mass = get_mass(hm, ns)
-
-            inputs[f"process_input_{len(inputs):03d}"] = treat_node(hm, sp_name, hm_name, hm_mass, apply_mapping, 'HM')
-
-            logging.debug(f"\t\t{hm_name} {hm_mass}")
-
-            subs = hm.findall('.//ipc:Substance', ns) 
-            for sub in subs:
-                sub_mass = get_mass(sub, ns)
-
-                new_sub = treat_node(sub, sp_name, hm_name, sub_mass, apply_mapping, 'Substance')
-                inputs[f"process_input_{len(inputs):03d}"] = new_sub
-
-                logging.debug(f"\t\t\t{sub.get('name', 'Unknown')} {sub_mass} ({(sub_mass/hm_mass).to('%'):.2f})")
-                computed_mass += sub_mass
+    ipcs = ['ipc:SubProduct', './/ipc:HomogeneousMaterial', './/ipc:Substance']
+    computed_mass = treat_node(product_node, inputs, ["_", "_", "_"], ipcs, ns, apply_mapping)
 
     tolerance = 0.01 * u.mg
     if abs(computed_mass - total_mass) > tolerance:
@@ -142,8 +141,9 @@ def ipc1752_to_yaml(xml_file: str, output_folder: str, apply_mapping):
             'product': product_name,
             'amount': {'value': 1, 'unit': 'unit'}
         },
-        'c_total_mass': total_mass,
-        'c_accounted_mass': computed_mass,
+        'c_total_mass': str(total_mass),
+        'c_accounted_mass': str(computed_mass),
+        'c_item_number': product_id_node.get('itemNumber'),
     }
 
     yaml_data['inputs'] = inputs
