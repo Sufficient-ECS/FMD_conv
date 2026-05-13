@@ -1,6 +1,4 @@
-import sys
 import os
-from flask import app
 import yaml
 import json
 import pandas as pd
@@ -9,7 +7,6 @@ from pathlib import Path
 from lxml import etree
 import pint
 from dash import Dash, dcc, html, Input, Output
-import re
 import click
 import logging
 
