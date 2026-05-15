@@ -85,7 +85,7 @@ def treat_node(node, inputs, names, ipcs, ns, apply_mapping, prev_mass = None):
 
         if this_names[-1] == "_" and (process or pd.isna(process)):
             computed_mass += treat_node(i, inputs, this_names, ipcs[1:], ns, apply_mapping, prev_mass = mass)
-        else:
+        elif is_accounted:
             computed_mass += mass
 
     return computed_mass
