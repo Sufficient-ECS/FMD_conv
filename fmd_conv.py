@@ -45,7 +45,6 @@ def treat_node(node, inputs, names, ipcs, ns, apply_mapping, prev_mass = None):
         this_names = names.copy()
         ind = this_names.index("_")
 
-
         if ind == 0: # If is first layer
             id_node = i.find(".//ipc:ProductID", ns)
             name = id_node.get("itemName", ns)
@@ -66,6 +65,8 @@ def treat_node(node, inputs, names, ipcs, ns, apply_mapping, prev_mass = None):
         indicator = '!' if not is_accounted else ''
         if prev_mass != None: # If is not the first layer
             logging.debug(f"{indicator}{indent}{name} {mass} ({(mass/prev_mass).to('%'):.2f})")
+            if mass > prev_mass * 1.01:
+                logging.warning(f"{name} mass ({mass}) is bigger than parent ({prev_mass})")
         else:
             logging.debug(f"{indicator}{indent}{name} {mass}")
 
