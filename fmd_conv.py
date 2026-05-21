@@ -180,8 +180,16 @@ def run_conv(input_files, output_folder, mappings_folder, verbose):
     output_folder.mkdir(parents=True, exist_ok=True)
 
     apply_mapping = load_mapping(mappings_folder)
+
     for xml_file in input_files:
-        ipc1752_to_yaml(xml_file, output_folder, apply_mapping)
+        path = Path(xml_file)
+
+        if path.is_file():
+            ipc1752_to_yaml(path, output_folder, apply_mapping)
+
+        elif path.is_dir():
+            for xml_path in path.rglob("*.xml"):
+                ipc1752_to_yaml(xml_path, output_folder, apply_mapping)
 
 
 if __name__ == "__main__":
